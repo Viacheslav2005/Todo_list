@@ -1,7 +1,16 @@
 <?php 
-require_once "connect.php";
-$id = $_POST['id'];
-$title = $_POST['title'];
-$complete = $_POST['complete'];
+session_start();
+require_once "../connect.php";
+// $id = isset($_POST["task_id"]) ? $_POST["task_id"] : false;
+$id = isset($_POST["id"]) ? $_POST["id"] : false;
+
+$title = isset($_POST["title"]) ? $_POST["title"] : false;
+
+if($id && $title) { 
+    $query = mysqli_query($con, "UPDATE `tasks` SET `title`= '$title' WHERE `id` = '$id'");
+    echo "Успех";
+} else {
+    echo "Не успех";
+}
 
 ?>

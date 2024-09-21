@@ -10,10 +10,9 @@ $query_all = mysqli_fetch_assoc($query);
 if($username && $password) {
     if(mysqli_num_rows($query) == 0) {
         $_SESSION["message"] = "Вы успешно зарегистрировались!";
-        $_SESSION["auth"] = true;
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         $query_add = mysqli_query($con, "INSERT INTO `users`(`username`, `password_hash`) VALUES ('$username','$hashedPassword')");
-        header("Location: ../personal_account.php");
+        header("Location: ../signin.php");
     } else {
         $_SESSION["message"] = "Данный никнейм занят!";
         header("Location: ../index.php");

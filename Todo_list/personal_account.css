@@ -14,12 +14,34 @@ body {
     --text-color: #fff;
     --primary-color: #007bff;
     --secondary-color: #6b7280;
+
 }
 .light-mode {
     --bg-color: #f8f9fa;
     --text-color: #212529;
     --primary-color: #007bff;
     --secondary-color: #6c757d;
+
+}
+#modal-content {
+    border-radius: 25px;
+}
+/* Для темной темы */
+.dark-mode #modal-content {
+ background-color: #333; 
+}
+
+.dark-mode .Name-modal {
+    color: #eee;
+}
+
+/* Для светлой темы */
+.light-mode #modal-content {
+ background-color: white;
+}
+
+.light-mode .Name-modal {
+ color: #333; 
 }
 .div1 {
     display: flex;
@@ -35,7 +57,7 @@ body {
     font-family: "Kanit";
     align-items: center;
 }
-.div_add form {
+.div_add  {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -43,8 +65,18 @@ body {
 .div-search {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     gap: 2.5%;
+    margin: 0 auto;
+    width: 50vw;
+}
+.search_form {
+    display: flex;
+    flex-direction: row;
+}
+.btn-submit-search {
+    border: none;
+    background: transparent;
 }
 .div-notes {
     display: flex;
@@ -58,7 +90,7 @@ body {
 .btn-socket {
     width: 30px;
     height: 30px;
-    background-color: purple;
+    background-color: #5850DD;
     border: none;
     border-radius: 5px;
     display: flex;
@@ -67,7 +99,7 @@ body {
     cursor: pointer;
 }
 .btn-modal {
-    background-color: purple;
+    background-color: #5850DD;
     border: none;
     display: flex;
     align-items: center;
@@ -80,12 +112,12 @@ body {
     left: 75%;
 }
 select {
-    background-color: purple;
+    background-color: 5850DD;
     color: white;
 }
 select option[value="All"], select option[value = "Complete"], select option[value = "Incomplete"]{
     background: white;
-    color: purple;
+    color: 5850DD;
 }
 .note {
     display: flex;
@@ -95,7 +127,123 @@ select option[value="All"], select option[value = "Complete"], select option[val
     height: 2.5vh;
     width: 50vw;
 }
-.btn-edit-delete {
+.light-mode .btn-edit, .btn-delete {
     border: none;
-    background-color: none;
+    background-color: #f8f9fa;
+}
+.dark-mode .btn-edit, .btn-delete {
+    border: none;
+    background-color: #212529;
+}
+.add_record_form {
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+    gap: 10px;
+}
+.add_record_form input {
+    background: transparent;
+    border-radius: 5px;
+    border: 2px solid white;
+    font-family: "Kanit";
+}
+.modal_div_btn {
+    display: flex;
+    flex-direction: row;
+    width: 25vw;
+    justify-content: space-around;
+    font-family: "Kanit";
+}
+.btn-primary {
+    border: none;
+    background-color: #5850DD;
+    color: white;
+    border-radius: 10px;
+    padding: 5px;
+}
+.Name-modal {
+    font-size: 25px;
+}
+.note {
+    display: flex;
+    flex-direction: row;
+    width: 45vw;
+    margin: 5% auto 0 auto;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+.note div {
+    display: flex;
+    flex-direction: row;
+}
+.div-checkbox {
+    gap: 10px;
+}
+.checkbox {
+    border: purple;
+    color: #6C63FF;
+    width: 26px;
+    height: 26px;
+}
+
+.note input.completed {
+    text-decoration: line-through; /* Добавляем зачеркивание */
+    color: #888; /* Изменяем цвет текста */
+}
+
+#modal_window_btn_close {
+    background: transparent;
+    border: 2px solid #6C63FF;
+    border-radius: 5px;
+    color: #6C63FF;
+}
+.btn-add {
+    background-color: #6C63FF;
+    border: none;
+    border-radius: 5px;
+    color: white;
+}
+.input_note {
+    background: transparent;
+    border: none;
+    text-decoration: none;
+    width: 35vw;
+}
+.light-mode .input_note  {
+    background: transparent;
+    border: none;
+    text-decoration: none;
+    color: black;
+}
+.dark-mode .input_note  {
+    background: transparent;
+    border: none;
+    text-decoration: none;
+    color: white;
+}
+.dark-mode .modal_window_input {
+    border-radius: 5px;
+    margin: 0 auto;
+    width: 20vw;
+    padding: 10px 20px;
+    font-family: "Kanit";
+}
+.light-mode .modal_window_input {
+    border-radius: 5px;
+    border-color: purple;
+    margin: 0 auto;
+    width: 20vw;
+    padding: 10px 20px;
+    font-family: "Kanit";
+}
+.note form {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25%;
+}
+.btn-modal:hover {
+    background-color: #534CC2;
+    transition: all 1.25s ease;
 }
