@@ -16,8 +16,18 @@ $search = mysqli_query($con, "SELECT * FROM `tasks` WHERE `title` LIKE '%$title_
 $searchs = mysqli_fetch_all($search);
 
 $status = isset($_GET['is_complete']) ? $_GET['is_complete'] : false;
-$status_query = mysqli_query($con, "SELECT * FROM `tasks` ORDER BY `is_complete` = '$status' AND `user_id` = '$id' DESC");
+$status_query = mysqli_query($con, "SELECT * FROM `tasks` WHERE `user_id` = '$id' and `is_complete` = '$status'");
 $status_all = mysqli_fetch_all($status_query);
+
+
+$date_filter = isset($_GET['created_at']) ? $_GET['created_at'] : false;
+if ($date_filter === '1') {
+    $filter_query = mysqli_query($con, "SELECT * FROM `tasks` WHERE `user_id` = '$id' ORDER BY create_at DESC"); // Новые
+    $filter_all = mysqli_fetch_all($filter_query);
+} elseif ($date_filter === '0') {
+    $filter_query = mysqli_query($con, "SELECT * FROM `tasks` WHERE `user_id` = '$id' ORDER BY create_at ASC"); // Старые
+    $filter_all = mysqli_fetch_all($filter_query);
+}
 
 $query = mysqli_query($con, "SELECT * FROM `tasks` WHERE `user_id` = '$id'");
 $notes = mysqli_fetch_all($query);
@@ -43,29 +53,41 @@ $notes = mysqli_fetch_all($query);
         <h3>Todo list</h3>
         <div class="div-search">
             <form action = "" class="search_form" method="GET">
-                <input type="text" placeholder="Search note..." class="input-search" value = "<?=$title_task?>" name = "search">
+                <input type="text" placeholder="Search note..." class="input-search" value = "<?=$title_task?>" name = "search" id="search-task">
                 <button type="submit" class="btn-submit-search"><img src="Image/Loupe.svg" alt=""></button>
             </form>
             <form action="" method="GET">
-                <select name="is_complete" id="">
-                    <option value="0">All</option>
-                    <option value="Выполненно">Complete</option>
-                    <option value="Невыполненно">Incomplete</option>
+                <select name="is_complete" id="filter-task" onchange="this.form.submit()">
+                    <option value="" <?= $status === '' ? "selected": '' ?>>All</option>
+                    <option value="1" <?= $status === '1' ? "selected": '' ?>>Complete</option>
+                    <option value="0" <?= $status === '0' ? "selected": '' ?>>Incomplete</option>
+                </select>
+            </form>
+            <form action="" method="GET">
+                <select name="created_at" id="filter-task" onchange="this.form.submit()">
+                    <option value="" <?= $date_filter === '' ? "selected": '' ?>>All</option>
+                    <option value="1" <?= $date_filter === '1' ? "selected": '' ?>>New</option>
+                    <option value="0" <?= $date_filter === '0' ? "selected": '' ?>>Old</option>
                 </select>
             </form>
             <button class="btn-socket" id="theme-toggle"><img src="Image/Vector.svg" alt=""></button>
         </div>
     </div>
     <div class="div-notes" id="div_notes">
-        <?php if($title_task && !$status) { ?>
+        <?php if($title_task) { ?>
             <?php if(mysqli_num_rows($query) > 0) { ?>
                 <?php foreach ($searchs as $note): ?>
                     <div class="note" id = "note" data-task-id='<?=$note[0]?>'>
                         <div class="div-checkbox">
                             <form action="CRUD/edit_record.php" method="POST">
                                 <div class="div-checkbox">
-                                    <input type="checkbox" class="checkbox" name = "task_id" id = "task_id" value="<?=$note[0]?>">
-                                    <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note" id = "title_note">
+                                    <?php if($note[4] == "0") { ?>
+                                        <input type="checkbox" class="checkbox" name = "task_id" id = "task_id" value="<?=$note[0]?>" onchange="updateStatus(this)" <?= $note[4]=='1' ? "checked": ""?>>
+                                        <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note" id = "title_note" >
+                                    <?php } else { ?>
+                                        <input type="checkbox" class="checkbox checked" name = "task_id" id = "task_id" value="<?=$note[0]?>">
+                                        <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note completed" id = "title_note" readonly>
+                                    <?php } ?>
                                 </div>
                         </div>
                         <div class="btn-group">
@@ -82,15 +104,50 @@ $notes = mysqli_fetch_all($query);
                     <h3>Empty ... </h3>
                 </div>
             <?php } ?>
-        <?php } elseif(!$title_task && $status) { ?>
+        <?php } elseif($status) { ?>
             <?php if(mysqli_num_rows($query) > 0) { ?>
                 <?php foreach ($status_all as $note): ?>
                     <div class="note" id = "note" data-task-id='<?=$note[0]?>'>
                         <div class="div-checkbox">
                             <form action="CRUD/edit_record.php" method="POST">
                                 <div class="div-checkbox">
-                                    <input type="checkbox" class="checkbox" name = "task_id" id = "task_id" value="<?=$note[0]?>">
-                                    <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note" id = "title_note">
+                                    <?php if($note[4] == "0") { ?>
+                                        <input type="checkbox" class="checkbox" name = "task_id" id = "task_id" value="<?=$note[0]?>" onchange="updateStatus(this)" <?= $note[4]=='1' ? "checked": ""?>>
+                                        <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note" id = "title_note" >
+                                    <?php } else { ?>
+                                        <input type="checkbox" class="checkbox checked" name = "task_id" id = "task_id" value="<?=$note[0]?>">
+                                        <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note completed" id = "title_note" readonly>
+                                    <?php } ?>
+                                </div>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn-edit"><img src="Image/Edit.svg" alt=""></button>
+                        </form>
+                            <button class="btn-delete" id="btn-delete" data-id = "<?=$note[0]?>"><img src="Image/Delete.svg" alt=""></a></button>
+                        </div>
+                    </div>
+                <?php endforeach;?>
+            <?php } else { ?>
+                <div class="note">
+                    <img src="Image/Detective-check-footprint 1.png" alt="" class="light-mode"> 
+                    <!-- <img src="Image/Detective-check-footprint 1 dark.png" alt="" class="dark-mode">  -->
+                    <h3>Empty ... </h3>
+                </div>
+            <?php } ?>
+            <?php } elseif($date_filter) { ?>
+            <?php if(mysqli_num_rows($query) > 0) { ?>
+                <?php foreach ($filter_all as $note): ?>
+                    <div class="note" id = "note" data-task-id='<?=$note[0]?>'>
+                        <div class="div-checkbox">
+                            <form action="CRUD/edit_record.php" method="POST">
+                                <div class="div-checkbox">
+                                    <?php if($note[4] == "0") { ?>
+                                        <input type="checkbox" class="checkbox" name = "task_id" id = "task_id" value="<?=$note[0]?>" onchange="updateStatus(this)" <?= $note[4]=='1' ? "checked": ""?>>
+                                        <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note" id = "title_note" >
+                                    <?php } else { ?>
+                                        <input type="checkbox" class="checkbox checked" name = "task_id" id = "task_id" value="<?=$note[0]?>">
+                                        <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note completed" id = "title_note" readonly>
+                                    <?php } ?>
                                 </div>
                         </div>
                         <div class="btn-group">
@@ -113,8 +170,8 @@ $notes = mysqli_fetch_all($query);
                     <div class="note" id = "note" data-task-id='<?=$note[0]?>'>
                         <div class="div-checkbox">
                                 <div class="div-checkbox">
-                                    <?php if($note[4] == "Невыполненно") { ?>
-                                        <input type="checkbox" class="checkbox" name = "task_id" id = "task_id" value="<?=$note[0]?>">
+                                    <?php if($note[4] == "0") { ?>
+                                        <input type="checkbox" class="checkbox" name = "task_id" id = "task_id" value="<?=$note[0]?>" onchange="updateStatus(this)" <?= $note[4]=='1' ? "checked": ""?>>
                                         <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note" id = "title_note" >
                                     <?php } else { ?>
                                         <input type="checkbox" class="checkbox checked" name = "task_id" id = "task_id" value="<?=$note[0]?>">
@@ -175,7 +232,7 @@ $notes = mysqli_fetch_all($query);
         $('#div_notes').html(emptyMessage);
     }
 
-
+// Удаление без обновления
 $(document).on('click', '.btn-delete', function () {
     var taskId = $(this).closest('.note').data('task-id');
     console.log(taskId);
@@ -202,6 +259,7 @@ $(document).on('click', '.btn-delete', function () {
         }
     });
 });
+//Редактирование без обновления
 
 $(document).on('click', '.btn-edit', function () {
     var taskId = $(this).closest('.note').data('task-id');
@@ -226,36 +284,122 @@ $(document).on('click', '.btn-edit', function () {
 $(document).on('change', '.checkbox', function () {
     var taskId = $(this).closest('.note').data('task-id');
     var checkbox = this;
-    var status = checkbox.checked ? "Выполненно" : "Невыполненно";
-    
-    $.ajax({
-        url: '../CRUD/update_task_status.php',
-        method: 'POST',
-        data: { id: taskId, status: status },
-        success: function (response) {
-            console.log('Запрос успешен:', response);
-            
-        },
-        error: function (xhr, status, error) {
-            console.error('Ошибка:', error);
-        }
-    });
-});
-
-var taskId = $(this).closest('.note').data('task-id');
-var checkbox = this;
-checkbox.forEach(checkbox => {
-    checkbox.addEventListener('change', () => {
-    const noteText = checkbox.nextElementSibling; // Получаем элемент <p>
-        if (checkbox.checked) {
-            noteText.classList.add('completed'); // Добавляем класс 'completed'
+    var status = checkbox.checked ? "1" : "0";
+    if (checkbox.checked) {
+        var confirmation = confirm("Вы уверены, что хотите пометить эту заметку как завершенную?");
+        if (confirmation) {
+            $.ajax({
+                url: '../CRUD/update_task_status.php',
+                method: 'POST',
+                data: { id: taskId, status: status },
+                success: function (response) {
+                    console.log('Запрос успешен:', response);
+                    
+                },
+                error: function (xhr, status, error) {
+                    console.error('Ошибка:', error);
+                }
+            });
         } else {
-            noteText.classList.remove('completed'); // Удаляем класс 'completed'
+            // Если пользователь отменил действие, оставляем галочку установленной
+            checkbox.checked = true;
         }
-    });
+    } else {
+        // Если чекбокс не отмечен, предупреждаем пользователя
+        alert("Вы не можете снять галочку с завершенной заметки.");
+        checkbox.checked = true;
+    }
 });
 
-// const inputField = document.getElementById('title_note'); // Получение элемента input
+// function updateStatus(checkbox) {
+//     var taskId = $(this).closest('.note').data('task-id');
+//     var status = checkbox.checked ? "Выполненно" : "Невыполненно";
+//     if (checkbox.checked) {
+//         var confirmation = confirm("Вы уверены, что хотите пометить эту заметку как завершенную?");
+//         if (confirmation) {
+//             $.ajax({
+//                 url: '../CRUD/update_task_status.php',
+//                 method: 'POST',
+//                 data: { id: taskId, status: status },
+//                 success: function (response) {
+//                     console.log('Запрос успешен:', response);
+                    
+//                 },
+//                 error: function (xhr, status, error) {
+//                     console.error('Ошибка:', error);
+//                 }
+//             });
+//         } else {
+//             // Если пользователь отменил действие, оставляем галочку установленной
+//             checkbox.checked = true;
+//         }
+//     } else {
+//         // Если чекбокс не отмечен, предупреждаем пользователя
+//         alert("Вы не можете снять галочку с завершенной заметки.");
+//         checkbox.checked = true;
+//     }
+// }
+
+
+// function updateTaskStatus(id, isCompleted, $taskText, $statusElement, checkbox) {
+//     if(checkbox.checked) {  
+//         var confirmation = confirm("Вы уверены, что хотите пометить эту заметку как завершенную?");
+//         if(confirmation) { 
+//         $.ajax({
+//             url: '../database/update_task.php',
+//             method: 'POST',
+//             data: {
+//                 id_task: id,
+//                 status: isCompleted ? 'Complete' : 'Incomplete'
+//             },
+//             success: function(response) {
+//                 console.log('Задача успешно обновлена');
+                
+//                 if (response === 'success') {
+//                     $taskText.toggleClass('completed', isCompleted);
+                    
+//                     if (isCompleted) {
+//                         $taskText.prop('readonly', true);
+//                     } else {
+//                         $taskText.prop('readonly', false);
+//                     }
+//                     $statusElement.html(isCompleted ? " Статус задачи Complete" : " Статус задачи Incomplete");
+//                 } else {
+//                     console.error('Ошибка при обновлении задачи:', response);
+//                 }
+//             },
+//             error: function(xhr, status, error) {
+//                 console.error('Ошибка при обновлении задачи:', error);
+//             }
+//         });
+//         } else {
+//             checkbox.checked = true;
+//         }
+//     } else { 
+//         alert("Вы не можете снять галочку с завершенной заметки.");
+//     }
+// }
+
+
+// $('.checkbox').on('change', function() {
+//     var $this = $(this);
+//     var taskId = $this.val();
+//     var $taskText = $this.closest('.note').find('.input_note');
+//     var $statusElement = $('#status');
+    
+//     var taskId = $(this).closest('.note').data('task-id');
+//     var checkbox = this;
+//     const noteText = checkbox.nextElementSibling; // Получаем элемент <p>
+//     if (checkbox.checked) {
+//         noteText.classList.add('completed'); // Добавляем класс 'completed'
+//     } else {
+//         noteText.classList.remove('completed'); // Удаляем класс 'completed'
+//     }
+//     updateStatus(taskId, $this.prop('checked'), $taskText, $statusElement);
+// });
+
+
+
 
 checkbox.addEventListener('change', () => {
     if (checkbox.checked) {
@@ -264,6 +408,9 @@ checkbox.addEventListener('change', () => {
         document.getElementById('title_note').readOnly = false; // Делаем input редактируемым
     }
 });
+
+
+
 </script>
 </body>
 </html>
