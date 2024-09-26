@@ -8,9 +8,5 @@ $title = isset($_POST["title"]) ? $_POST["title"] : false;
 
 if($id && $title) { 
     $query = mysqli_query($con, "UPDATE `tasks` SET `title`= '$title' WHERE `id` = '$id'");
-    echo "Успех";
-} else {
-    echo "Не успех";
 }
-
 ?>

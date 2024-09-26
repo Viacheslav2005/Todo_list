@@ -79,13 +79,13 @@ $notes = mysqli_fetch_all($query);
                 <?php foreach ($searchs as $note): ?>
                     <div class="note" id = "note" data-task-id='<?=$note[0]?>'>
                         <div class="div-checkbox">
-                            <form action="CRUD/edit_record.php" method="POST">
+                            <form action="" method="POST">
                                 <div class="div-checkbox">
                                     <?php if($note[4] == "0") { ?>
                                         <input type="checkbox" class="checkbox" name = "task_id" id = "task_id" value="<?=$note[0]?>" onchange="updateStatus(this)" <?= $note[4]=='1' ? "checked": ""?>>
                                         <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note" id = "title_note" >
                                     <?php } else { ?>
-                                        <input type="checkbox" class="checkbox checked" name = "task_id" id = "task_id" value="<?=$note[0]?>">
+                                        <input type="checkbox" class="checkbox checked" name = "task_id" id = "task_id" value="<?=$note[0]?>" checked>
                                         <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note completed" id = "title_note" readonly>
                                     <?php } ?>
                                 </div>
@@ -109,13 +109,13 @@ $notes = mysqli_fetch_all($query);
                 <?php foreach ($status_all as $note): ?>
                     <div class="note" id = "note" data-task-id='<?=$note[0]?>'>
                         <div class="div-checkbox">
-                            <form action="CRUD/edit_record.php" method="POST">
+                            <form action="" method="POST">
                                 <div class="div-checkbox">
                                     <?php if($note[4] == "0") { ?>
                                         <input type="checkbox" class="checkbox" name = "task_id" id = "task_id" value="<?=$note[0]?>" onchange="updateStatus(this)" <?= $note[4]=='1' ? "checked": ""?>>
                                         <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note" id = "title_note" >
                                     <?php } else { ?>
-                                        <input type="checkbox" class="checkbox checked" name = "task_id" id = "task_id" value="<?=$note[0]?>">
+                                        <input type="checkbox" class="checkbox checked" name = "task_id" id = "task_id" value="<?=$note[0]?>" checked>
                                         <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note completed" id = "title_note" readonly>
                                     <?php } ?>
                                 </div>
@@ -139,13 +139,13 @@ $notes = mysqli_fetch_all($query);
                 <?php foreach ($filter_all as $note): ?>
                     <div class="note" id = "note" data-task-id='<?=$note[0]?>'>
                         <div class="div-checkbox">
-                            <form action="CRUD/edit_record.php" method="POST">
+                            <form action="" method="POST">
                                 <div class="div-checkbox">
                                     <?php if($note[4] == "0") { ?>
                                         <input type="checkbox" class="checkbox" name = "task_id" id = "task_id" value="<?=$note[0]?>" onchange="updateStatus(this)" <?= $note[4]=='1' ? "checked": ""?>>
                                         <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note" id = "title_note" >
                                     <?php } else { ?>
-                                        <input type="checkbox" class="checkbox checked" name = "task_id" id = "task_id" value="<?=$note[0]?>">
+                                        <input type="checkbox" class="checkbox checked" name = "task_id" id = "task_id" value="<?=$note[0]?>" checked>
                                         <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note completed" id = "title_note" readonly>
                                     <?php } ?>
                                 </div>
@@ -171,17 +171,17 @@ $notes = mysqli_fetch_all($query);
                         <div class="div-checkbox">
                                 <div class="div-checkbox">
                                     <?php if($note[4] == "0") { ?>
-                                        <input type="checkbox" class="checkbox" name = "task_id" id = "task_id" value="<?=$note[0]?>" onchange="updateStatus(this)" <?= $note[4]=='1' ? "checked": ""?>>
+                                        <input type="checkbox" class="checkbox" name = "task_id" id = "task_id" value="<?=$note[0]?>" onchange="updateStatus(this)" <?= $note[4] == '1' ? "checked": ""?>>
                                         <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note" id = "title_note" >
                                     <?php } else { ?>
-                                        <input type="checkbox" class="checkbox checked" name = "task_id" id = "task_id" value="<?=$note[0]?>">
+                                        <input type="checkbox" class="checkbox checked" name = "task_id" id = "task_id" value="<?=$note[0]?>" checked>
                                         <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note completed" id = "title_note" readonly>
                                     <?php } ?>
                                 </div>
                         </div>
                         <div class="btn-group">
                             <button class="btn-edit"><img src="Image/Edit.svg" alt=""></button>
-                            <button class="btn-delete" id="btn-delete" data-id = "<?=$note[0]?>"><img src="Image/Delete.svg" alt=""></a></button>
+                            <button class="btn-delete" id="btn-delete" data-id = "<?=$note[0]?>"><img src="Image/Delete.svg" alt=""></button>
                         </div>
                     </div>
                 <?php endforeach;?>
