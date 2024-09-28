@@ -8,6 +8,7 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     transition: all 0.3s ease;
+    font-family: "Montserrat", sans-serif;
 }
 .dark-mode {
     --bg-color: #212529;
@@ -54,7 +55,7 @@ body {
 .div_add {
     display: flex;
     flex-direction: column;
-    font-family: "Kanit";
+    font-family: "Montserrat", sans-serif;
     align-items: center;
 }
 .div_add  {
@@ -140,19 +141,21 @@ select option[value="All"], select option[value = "Complete"], select option[val
     flex-direction: column;
     align-items: baseline;
     gap: 10px;
+    color: white;
 }
 .add_record_form input {
     background: transparent;
     border-radius: 5px;
     border: 2px solid white;
-    font-family: "Kanit";
+    color: white;
+    font-family: "Montserrat", sans-serif;
 }
 .modal_div_btn {
     display: flex;
     flex-direction: row;
     width: 25vw;
     justify-content: space-around;
-    font-family: "Kanit";
+    font-family: "Montserrat", sans-serif;
 }
 .btn-primary {
     border: none;
@@ -167,17 +170,24 @@ select option[value="All"], select option[value = "Complete"], select option[val
 .note {
     display: flex;
     flex-direction: row;
-    width: 45vw;
+    width: 55vw;
     margin: 5% auto 0 auto;
     align-items: flex-start;
     justify-content: space-between;
 }
-.note div {
-    display: flex;
-    flex-direction: row;
-}
 .div-checkbox {
     gap: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.input_descr {
+    width: 20vw;
+}
+.inputs_div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 .checkbox {
     border: purple;
@@ -207,7 +217,7 @@ select option[value="All"], select option[value = "Complete"], select option[val
     background: transparent;
     border: none;
     text-decoration: none;
-    width: 35vw;
+    width: 20vw;
 }
 .light-mode .input_note  {
     background: transparent;
@@ -226,7 +236,8 @@ select option[value="All"], select option[value = "Complete"], select option[val
     margin: 0 auto;
     width: 20vw;
     padding: 10px 20px;
-    font-family: "Kanit";
+    font-family: "Montserrat", sans-serif;
+    color: white;
 }
 .light-mode .modal_window_input {
     border-radius: 5px;
@@ -234,7 +245,8 @@ select option[value="All"], select option[value = "Complete"], select option[val
     margin: 0 auto;
     width: 20vw;
     padding: 10px 20px;
-    font-family: "Kanit";
+    font-family: "Montserrat", sans-serif;
+    color: black;
 }
 .note form {
     display: flex;

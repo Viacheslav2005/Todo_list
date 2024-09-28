@@ -17,6 +17,7 @@ $searchs = mysqli_fetch_all($search);
 
 $status = isset($_GET['is_complete']) ? $_GET['is_complete'] : false;
 $status_query = mysqli_query($con, "SELECT * FROM `tasks` WHERE `user_id` = '$id' and `is_complete` = '$status'");
+// var_dump("SELECT * FROM `tasks` WHERE `user_id` = '$id' and `is_complete` = '$status'");
 $status_all = mysqli_fetch_all($status_query);
 
 
@@ -31,6 +32,11 @@ if ($date_filter === '1') {
 
 $query = mysqli_query($con, "SELECT * FROM `tasks` WHERE `user_id` = '$id'");
 $notes = mysqli_fetch_all($query);
+
+
+// var_dump($status_all);
+// var_dump($status);
+// var_dump();
 ?>
 <?php include "header.php"?>
 <!DOCTYPE html>
@@ -44,6 +50,9 @@ $notes = mysqli_fetch_all($query);
     <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="personal_account.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 </head>
@@ -53,21 +62,21 @@ $notes = mysqli_fetch_all($query);
         <h3>Todo list</h3>
         <div class="div-search">
             <form action = "" class="search_form" method="GET">
-                <input type="text" placeholder="Search note..." class="input-search" value = "<?=$title_task?>" name = "search" id="search-task">
+                <input type="text" placeholder="Поиск записи" class="input-search" value = "<?=$title_task?>" name = "search" id="search-task">
                 <button type="submit" class="btn-submit-search"><img src="Image/Loupe.svg" alt=""></button>
             </form>
             <form action="" method="GET">
                 <select name="is_complete" id="filter-task" onchange="this.form.submit()">
-                    <option value="" <?= $status === '' ? "selected": '' ?>>All</option>
-                    <option value="1" <?= $status === '1' ? "selected": '' ?>>Complete</option>
-                    <option value="0" <?= $status === '0' ? "selected": '' ?>>Incomplete</option>
+                    <option value="" <?= $status === '' ? "selected": '' ?>>Все</option>
+                    <option value="1" <?= $status === '1' ? "selected": '' ?>>Выполненные</option>
+                    <option value="0" <?= $status === '0' ? "selected": '' ?>>Невыполненные</option>
                 </select>
             </form>
             <form action="" method="GET">
                 <select name="created_at" id="filter-task" onchange="this.form.submit()">
-                    <option value="" <?= $date_filter === '' ? "selected": '' ?>>All</option>
-                    <option value="1" <?= $date_filter === '1' ? "selected": '' ?>>New</option>
-                    <option value="0" <?= $date_filter === '0' ? "selected": '' ?>>Old</option>
+                    <option value="" <?= $date_filter === '' ? "selected": '' ?>>Все</option>
+                    <option value="1" <?= $date_filter === '1' ? "selected": '' ?>>Новые</option>
+                    <option value="0" <?= $date_filter === '0' ? "selected": '' ?>>Старые</option>
                 </select>
             </form>
             <button class="btn-socket" id="theme-toggle"><img src="Image/Vector.svg" alt=""></button>
@@ -82,8 +91,11 @@ $notes = mysqli_fetch_all($query);
                             <form action="" method="POST">
                                 <div class="div-checkbox">
                                     <?php if($note[4] == "0") { ?>
-                                        <input type="checkbox" class="checkbox" name = "task_id" id = "task_id" value="<?=$note[0]?>" onchange="updateStatus(this)" <?= $note[4]=='1' ? "checked": ""?>>
-                                        <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note" id = "title_note" >
+                                        <input type="checkbox" class="checkbox" name = "task_id" id = "task_id" value="<?=$note[0]?>" onchange="updateStatus(this)" <?= $note[4] == '1' ? "checked": ""?>>
+                                        <div class="inputs_div">
+                                            <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note" id = "title_note" >
+                                            <input type="text" value="<?= $note[3] ?>" name = "title" class="input_note" id = "title_note" >
+                                        </div>
                                     <?php } else { ?>
                                         <input type="checkbox" class="checkbox checked" name = "task_id" id = "task_id" value="<?=$note[0]?>" checked>
                                         <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note completed" id = "title_note" readonly>
@@ -104,7 +116,7 @@ $notes = mysqli_fetch_all($query);
                     <h3>Empty ... </h3>
                 </div>
             <?php } ?>
-        <?php } elseif($status) { ?>
+        <?php } elseif($status >= 0) { ?>
             <?php if(mysqli_num_rows($query) > 0) { ?>
                 <?php foreach ($status_all as $note): ?>
                     <div class="note" id = "note" data-task-id='<?=$note[0]?>'>
@@ -112,8 +124,11 @@ $notes = mysqli_fetch_all($query);
                             <form action="" method="POST">
                                 <div class="div-checkbox">
                                     <?php if($note[4] == "0") { ?>
-                                        <input type="checkbox" class="checkbox" name = "task_id" id = "task_id" value="<?=$note[0]?>" onchange="updateStatus(this)" <?= $note[4]=='1' ? "checked": ""?>>
-                                        <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note" id = "title_note" >
+                                        <input type="checkbox" class="checkbox" name = "task_id" id = "task_id" value="<?=$note[0]?>" onchange="updateStatus(this)" <?= $note[4] == '1' ? "checked": ""?>>
+                                        <div class="inputs_div">
+                                            <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note" id = "title_note" >
+                                            <input type="text" value="<?= $note[3] ?>" name = "title" class="input_note" id = "title_note" >
+                                        </div>
                                     <?php } else { ?>
                                         <input type="checkbox" class="checkbox checked" name = "task_id" id = "task_id" value="<?=$note[0]?>" checked>
                                         <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note completed" id = "title_note" readonly>
@@ -142,8 +157,11 @@ $notes = mysqli_fetch_all($query);
                             <form action="" method="POST">
                                 <div class="div-checkbox">
                                     <?php if($note[4] == "0") { ?>
-                                        <input type="checkbox" class="checkbox" name = "task_id" id = "task_id" value="<?=$note[0]?>" onchange="updateStatus(this)" <?= $note[4]=='1' ? "checked": ""?>>
-                                        <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note" id = "title_note" >
+                                        <input type="checkbox" class="checkbox" name = "task_id" id = "task_id" value="<?=$note[0]?>" onchange="updateStatus(this)" <?= $note[4] == '1' ? "checked": ""?>>
+                                        <div class="inputs_div">
+                                            <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note" id = "title_note" >
+                                            <input type="text" value="<?= $note[3] ?>" name = "title" class="input_note" id = "title_note" >
+                                        </div>
                                     <?php } else { ?>
                                         <input type="checkbox" class="checkbox checked" name = "task_id" id = "task_id" value="<?=$note[0]?>" checked>
                                         <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note completed" id = "title_note" readonly>
@@ -172,7 +190,10 @@ $notes = mysqli_fetch_all($query);
                                 <div class="div-checkbox">
                                     <?php if($note[4] == "0") { ?>
                                         <input type="checkbox" class="checkbox" name = "task_id" id = "task_id" value="<?=$note[0]?>" onchange="updateStatus(this)" <?= $note[4] == '1' ? "checked": ""?>>
-                                        <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note" id = "title_note" >
+                                        <div class="inputs_div">
+                                            <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note" id = "title_note" >
+                                            <input type="text" value="<?= $note[3] ?>" name = "title" class="input_note" id = "title_note" >
+                                        </div>
                                     <?php } else { ?>
                                         <input type="checkbox" class="checkbox checked" name = "task_id" id = "task_id" value="<?=$note[0]?>" checked>
                                         <input type="text" value="<?= $note[2] ?>" name = "title" class="input_note completed" id = "title_note" readonly>
@@ -212,7 +233,7 @@ $notes = mysqli_fetch_all($query);
             <input type="text" placeholder="Тема задачи" name = "title" class="modal_window_input">
             <input type="text" placeholder="Описание" name = "description" class="modal_window_input">
             <div class="modal_div_btn">
-                <button type = "button" data-bs-dismiss="modal" id = "modal_window_btn_close">Close</button>
+                <button type = "button" data-bs-dismiss="modal" id = "modal_window_btn_close">Назад</button>
                 <button type = "submit" class="btn-add">Создать задание</button>
             </div>
         </form>
